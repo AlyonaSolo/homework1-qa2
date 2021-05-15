@@ -11,9 +11,10 @@ import java.util.Locale;
 
 public class MyFisthomeworkQa2 {
     private final By ACCEPT_COOKIES_BTN = By.xpath(".//button[@mode = 'primary']");
+    private final By CLOSE_ADVERTISING = By.xpath(".//div[@style='position: fixed; background-color: rgb(51, 51, 51); font-size: 0.75em; color: rgb(255, 255, 255); cursor: pointer; padding: 9px; bottom: 35px; right: 30px; z-index: 61000; border-radius: 50%;']");
     private final By HOME_PAGE_ARTICLE_TITLE = By.xpath(".//span[@itemprop= 'headline name']");
-//    private final By LOCATOR_ARTICLE_COMMENTS = By.xpath(".//img[contains(@src,'/v5/img/icons/comment-v2.svg')]");
-    private final By LOCATOR_ARTICLE_COMMENTS = By.xpath(".//a[contains(@class,'article-share__item article-share__item--comments article-share__item-with-count')]");
+    private final By LOCATOR_ARTICLE_COMMENTS = By.xpath(".//img[@src='/v5/img/icons/comment-v2.svg']");
+//    private final By LOCATOR_ARTICLE_COMMENTS = By.xpath(".//a[contains(@class,'article-share__item article-share__item--comments article-share__item-with-count')]");
     private final By LOCATOR_ARTICLE_COMMENTS_COUNT = By.xpath(".//span[contains(@class,'list-article__comment section-font-color')]");
     private final By LOCATOR_LOGO = By.xpath(".//a[@class='flex header-logo flex--align-items-center']");
     private final By LOCATOR_CHANGE_LANG = By.xpath(".//div[@class = 'menu-items menu-items--top']");
@@ -32,6 +33,8 @@ public class MyFisthomeworkQa2 {
         wait.until(ExpectedConditions.presenceOfElementLocated(ACCEPT_COOKIES_BTN));
 
         driver.findElement(ACCEPT_COOKIES_BTN).click();
+
+        driver.findElement(CLOSE_ADVERTISING).click();
 
         driver.findElement(HOME_PAGE_ARTICLE_TITLE).click();
         driver.findElement(LOCATOR_ARTICLE_COMMENTS).click();
