@@ -14,7 +14,7 @@ import java.util.List;
 public class MyFisthomeworkQa2 {
     private final By ACCEPT_COOKIES_BTN = By.xpath(".//button[@mode = 'primary']");
     private final By CLOSE_ADVERTISING = By.xpath(".//div[contains(@style, 'z-index: 61000')]");
-    private final By HOME_PAGE_ARTICLE_TITLE = By.xpath(".//span[@itemprop= 'headline name']");
+    private final By HOME_PAGE_ARTICLE_TITLE = By.xpath(".//span[@class= 'list-article__headline']");
     private final By HOME_PAGE_ARTICLE = By.tagName("article");
     private final By LOCATOR_ARTICLE_COMMENTS = By.xpath(".//img[@src='/v5/img/icons/comment-v2.svg']");
     //    private final By LOCATOR_ARTICLE_COMMENTS = By.xpath(".//a[contains(@class,'article-share__item article-share__item--comments article-share__item-with-count')]");
@@ -189,8 +189,9 @@ public class MyFisthomeworkQa2 {
         List<WebElement> articles = driver.findElements(HOME_PAGE_ARTICLE);
             for (WebElement we:articles) {
             LOGGER.info("If article is not empty get title text");
-            if (!we.findElement(HOME_PAGE_ARTICLE_TITLE).getText().isEmpty()){
-            }
+            if (!we.getText().isEmpty()) {
+             }
+            String articletitle = we.findElement(HOME_PAGE_ARTICLE_TITLE).getText();
             int homePageCommentsCount=0;
             LOGGER.info("If comments count is not empty save it to a string");
             if (!we.findElements(HOME_PAGE_ARTICLE_COMMENTS).isEmpty()){
@@ -201,7 +202,7 @@ public class MyFisthomeworkQa2 {
               homePageCommentsCount = Integer.parseInt(commentsCountsCount);
             }
         LOGGER.info("Print out in console all title from home page without comments and next to it comments count for this article");
-            System.out.println(we.getText().replaceAll("\\(\\d+\\)$",":") + homePageCommentsCount);
+            System.out.println(articletitle.replaceAll("\\(\\d+\\)$",":") + homePageCommentsCount);
 
         }
 
