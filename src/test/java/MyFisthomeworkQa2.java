@@ -3,6 +3,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -14,7 +15,7 @@ import java.util.List;
 public class MyFisthomeworkQa2 {
     private final By ACCEPT_COOKIES_BTN = By.xpath(".//button[@mode = 'primary']");
     private final By CLOSE_ADVERTISING = By.xpath(".//div[contains(@style, 'z-index: 61000')]");
-    private final By HOME_PAGE_ARTICLE_TITLE = By.xpath(".//span[@class= 'list-article__headline']");
+    private final By HOME_PAGE_ARTICLE_TITLE = By.xpath(".//span[@class = 'list-article__headline']");
     private final By HOME_PAGE_ARTICLE = By.tagName("article");
     private final By LOCATOR_ARTICLE_COMMENTS = By.xpath(".//img[@src='/v5/img/icons/comment-v2.svg']");
     //    private final By LOCATOR_ARTICLE_COMMENTS = By.xpath(".//a[contains(@class,'article-share__item article-share__item--comments article-share__item-with-count')]");
@@ -24,8 +25,13 @@ public class MyFisthomeworkQa2 {
 
     private final By ARTICLE_PAGE_TITLE = By.xpath(".//h1[contains(@class,'article-headline' )]");
     private final By ARTICLE_PAGE_COMMENTS = By.xpath(".//a[contains(@class,'article-share__item article-share__item--comments article-share__item-with-count' )]");
+    private final By ARTICLE_PAGE_TITLE_ADDITIONAL_TEXT = By.xpath(".//div[@class='article-headline--additional']");
 
-    private final Logger LOGGER = LogManager.getLogger();
+    private final By COMMENTS_PAGE_TITLE = By.xpath(".//h1[@class='article-headline']");
+    private final By COMMENTS_PAGE_TITLE_ADDITIONAL_TEXT = By.xpath(".//div[@class='article-headline--additional']");
+    private final By COMMENTS_PAGE_COMMENTS_COUNT = By.xpath(".//span[contains(@class,'article-comments-heading__count ')]");
+
+    private final Logger LOGGER = LogManager.getLogger(MyFisthomeworkQa2.class);
 
     private WebDriver driver;
 
@@ -210,7 +216,7 @@ public class MyFisthomeworkQa2 {
     }
 
     @Test
-    public void sixthTest(){
+    public void sixthTest() {
         LOGGER.info("");
 
         LOGGER.info("Setting driver location");
@@ -230,62 +236,69 @@ public class MyFisthomeworkQa2 {
         LOGGER.info("Accepting cookie.");
         driver.findElement(ACCEPT_COOKIES_BTN).click();
 
-    //---------------------------HOME PAGE-----------------------------------------------------------
+        JavascriptExecutor jse = (JavascriptExecutor) driver;
+        jse.executeScript("window.scrollBy(0,250)");
+
+        //---------------------------HOME PAGE-----------------------------------------------------------
 
         List<WebElement> articles = driver.findElements(HOME_PAGE_ARTICLE);
-        WebElement article = articles.get(1);
+        WebElement article = articles.get(4);
 
         String homePageTitle = article.findElement(HOME_PAGE_ARTICLE_TITLE).getText();
-        int homePageCommentsCount = getCommentsCount(article,HOME_PAGE_ARTICLE);
+        int homePageCommentsCount = getCommentsCount(article, HOME_PAGE_ARTICLE);
 //        if (!article.findElements(HOME_PAGE_ARTICLE_COMMENTS).isEmpty()){
 ////           // String commentsCount = article.findElement(HOME_PAGE_ARTICLE_COMMENTS).getText();
-                //
+        //
 ////          //   homePageCommentsCount = Integer.parseInt(commentsCount);
 //            homePageCommentsCount = getCommentsCount(article.findElement(HOME_PAGE_ARTICLE_COMMENTS).getText());
 //        }
         article.findElement(HOME_PAGE_ARTICLE_TITLE).click();
 
-    //-------------------------ARTICLE PAGE----------------------------------------------------------
+        //-------------------------ARTICLE PAGE----------------------------------------------------------
+        String articlePageTitleAdditionalText = driver.findElement(ARTICLE_PAGE_TITLE_ADDITIONAL_TEXT).getText();
 
-        String articlePageTitle = driver.findElement(ARTICLE_PAGE_TITLE).getText();
+        String articlePageTitle = driver.findElement(ARTICLE_PAGE_TITLE).getText().replaceAll(articlePageTitleAdditionalText, " ").trim();
         int articlePageCommentsCount = getCommentsCount(ARTICLE_PAGE_COMMENTS);
 
-        Assertions.assertEquals(homePageTitle,articlePageTitle,"Wrong title!");
-        Assertions.assertEquals(homePageCommentsCount,articlePageCommentsCount,"Wrong comments count");
+        Assertions.assertEquals(homePageTitle, articlePageTitle, "Wrong title!");
+        Assertions.assertEquals(homePageCommentsCount, articlePageCommentsCount, "Wrong comments count");
+
+        driver.findElement(ARTICLE_PAGE_COMMENTS).click();
+        //-------------------------COMMENTS PAGE----------------------------------------------------------
+        String commentsPageAdditionalText = driver.findElement(COMMENTS_PAGE_TITLE_ADDITIONAL_TEXT).getText();
+        String commentsPageTitle = driver.findElement(COMMENTS_PAGE_TITLE).getText().replaceAll(commentsPageAdditionalText, " ").trim();
+
+        int commentsPageCommentsCount = 0;
+        if (!driver.findElements(COMMENTS_PAGE_COMMENTS_COUNT).isEmpty()) {
+            String commentsCount =
+//            int commentsPageCommentsCount = getCommentsCount(COMMENTS_PAGE_COMMENTS_COUNT);
+        }
+        Assertions.assertEquals(homePageTitle,commentsPageTitle,"Wrong title!");
+        Assertions.assertEquals(homePageCommentsCount,commentsPageCommentsCount,"Wrong comments count!");
     }
+        //=====================================TEST REALISATION==================================================
 
-    //-------------------------COMMENTS PAGE----------------------------------------------------------
+        private int getCommentsCount (By locator){
+            int commentsCount = 0;
+            if (!driver.findElements(locator).isEmpty()) {
+                String commentsCountText = driver.findElement(locator).getText();
+                commentsCount = Integer.parseInt(commentsCountText);
+            }
 
-
-
-
-
-
-
-
-    //=====================================TEST REALISATION==================================================
-
-    private int getCommentsCount (By locator) {
-        int commentsCount = 0;
-        if (!driver.findElements(locator).isEmpty()) {
-            String commentsCountText = driver.findElement(locator).getText();
-            commentsCount = Integer.parseInt(commentsCountText);
+            return commentsCount;
         }
 
-       return commentsCount;
-    }
+        private int getCommentsCount (WebElement we, By locator){
+            int commentsCount = 0;
 
-    private int getCommentsCount (WebElement we , By locator) {
-        int commentsCount = 0;
+            if (!we.findElements(locator).isEmpty()) {
+                String commentsCountText = we.findElement(locator).getText();
+                commentsCountText = commentsCountText.substring(1, commentsCountText.length() - 1);
+                commentsCount = Integer.parseInt(commentsCountText);
+            }
 
-        if (!we.findElements(locator).isEmpty()) {
-            String commentsCountText = we.findElement(locator).getText();
-            commentsCountText = commentsCountText.substring(1,commentsCountText.length()-1);
-            commentsCount = Integer.parseInt(commentsCountText);
+            return commentsCount;
         }
-
-        return commentsCount;
-    }
 //    @AfterEach
 //     public void CloseBrowser() {
 //        driver.close();
