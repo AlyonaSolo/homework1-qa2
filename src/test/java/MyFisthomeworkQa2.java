@@ -15,17 +15,20 @@ import java.util.List;
 public class MyFisthomeworkQa2 {
     private final By ACCEPT_COOKIES_BTN = By.xpath(".//button[@mode = 'primary']");
     private final By CLOSE_ADVERTISING = By.xpath(".//div[contains(@style, 'z-index: 61000')]");
-    private final By HOME_PAGE_ARTICLE_TITLE = By.xpath(".//span[@class = 'list-article__headline']");
+
+    private final By HOME_PAGE_TITLE = By.xpath(".//span[@class = 'list-article__headline']");
     private final By HOME_PAGE_ARTICLE = By.tagName("article");
     private final By LOCATOR_ARTICLE_COMMENTS = By.xpath(".//img[@src='/v5/img/icons/comment-v2.svg']");
     //    private final By LOCATOR_ARTICLE_COMMENTS = By.xpath(".//a[contains(@class,'article-share__item article-share__item--comments article-share__item-with-count')]");
-    private final By HOME_PAGE_ARTICLE_COMMENTS = By.xpath(".//span[contains(@class,'list-article__comment section-font-color')]");
+    private final By HOME_PAGE_COMMENTS = By.xpath(".//span[contains(@class,'list-article__comment section-font-color')]");
     private final By LOCATOR_LOGO = By.xpath(".//a[@class='flex header-logo flex--align-items-center']");
     private final By LOCATOR_CHANGE_LANG = By.xpath(".//div[@class = 'menu-items menu-items--top']");
 
     private final By ARTICLE_PAGE_TITLE = By.xpath(".//h1[contains(@class,'article-headline' )]");
-    private final By ARTICLE_PAGE_COMMENTS = By.xpath(".//a[contains(@class,'article-share__item article-share__item--comments article-share__item-with-count' )]");
+    private final By ARTICLE_PAGE_TITLE_DIFFERENT = By.xpath(".//h1[@class='article-superheader__headline']");
+    private final By ARTICLE_PAGE_COMMENTS = By.xpath(".//span[@class='article-share__item--count']");
     private final By ARTICLE_PAGE_TITLE_ADDITIONAL_TEXT = By.xpath(".//div[@class='article-headline--additional']");
+    private final By ARTICLE_PAGE_COMMENTS_BTN = By.xpath("");
 
     private final By COMMENTS_PAGE_TITLE = By.xpath(".//h1[@class='article-headline']");
     private final By COMMENTS_PAGE_TITLE_ADDITIONAL_TEXT = By.xpath(".//div[@class='article-headline--additional']");
@@ -60,7 +63,7 @@ public class MyFisthomeworkQa2 {
         driver.findElement(CLOSE_ADVERTISING).click();
 
         LOGGER.info("Opening at home page first article");
-        driver.findElement(HOME_PAGE_ARTICLE_TITLE).click();
+        driver.findElement(HOME_PAGE_TITLE).click();
 
         LOGGER.info("Opening comments for first article.");
         driver.findElement(LOCATOR_ARTICLE_COMMENTS).click();
@@ -88,7 +91,7 @@ public class MyFisthomeworkQa2 {
         driver.findElement(ACCEPT_COOKIES_BTN).click();
 
         LOGGER.info("Find first title on the home page");
-        WebElement article = driver.findElement(HOME_PAGE_ARTICLE_TITLE);
+        WebElement article = driver.findElement(HOME_PAGE_TITLE);
 
         LOGGER.info("Save title to a variable ");
         String title = article.getText();
@@ -154,14 +157,14 @@ public class MyFisthomeworkQa2 {
         driver.findElement(ACCEPT_COOKIES_BTN).click();
 
         LOGGER.info("Find all titles from home page ");
-        List<WebElement> headlines = driver.findElements(HOME_PAGE_ARTICLE_TITLE);
+        List<WebElement> headlines = driver.findElements(HOME_PAGE_TITLE);
 
         for (int i = 0; i < headlines.size(); i++) {
-        LOGGER.info("If title is not empty save it in variable");
+            LOGGER.info("If title is not empty save it in variable");
             if (!headlines.get(i).getText().isEmpty()) {
                 String head = (headlines.get(i).getText());
 
-        LOGGER.info("Print out in console all titles without comments count");
+                LOGGER.info("Print out in console all titles without comments count");
                 System.out.println(i + ":" + head.replaceAll("\\(\\d+\\)$", " "));
 //               head =head.replaceAll("[\\p{Ps}\\p{Pe}]"," ");
 //               head =head.replaceAll("[0-9]"," ");----remove all int
@@ -193,22 +196,22 @@ public class MyFisthomeworkQa2 {
 
         LOGGER.info("Find all articles from home page");
         List<WebElement> articles = driver.findElements(HOME_PAGE_ARTICLE);
-            for (WebElement we:articles) {
+        for (WebElement we : articles) {
             LOGGER.info("If article is not empty get title text");
             if (!we.getText().isEmpty()) {
-             }
-            String articletitle = we.findElement(HOME_PAGE_ARTICLE_TITLE).getText();
-            int homePageCommentsCount=0;
-            LOGGER.info("If comments count is not empty save it to a string");
-            if (!we.findElements(HOME_PAGE_ARTICLE_COMMENTS).isEmpty()){
-               String commentsCountsCount =we.findElement(HOME_PAGE_ARTICLE_COMMENTS).getText();
-               LOGGER.info("Remove from comments count brackets");
-               commentsCountsCount=commentsCountsCount.substring(1,commentsCountsCount.length() -1);
-               LOGGER.info("Change string to a integer");
-              homePageCommentsCount = Integer.parseInt(commentsCountsCount);
             }
-        LOGGER.info("Print out in console all title from home page without comments and next to it comments count for this article");
-            System.out.println(articletitle.replaceAll("\\(\\d+\\)$",":") + homePageCommentsCount);
+            String articletitle = we.findElement(HOME_PAGE_TITLE).getText();
+            int homePageCommentsCount = 0;
+            LOGGER.info("If comments count is not empty save it to a string");
+            if (!we.findElements(HOME_PAGE_COMMENTS).isEmpty()) {
+                String commentsCountsCount = we.findElement(HOME_PAGE_COMMENTS).getText();
+                LOGGER.info("Remove from comments count brackets");
+                commentsCountsCount = commentsCountsCount.substring(1, commentsCountsCount.length() - 1);
+                LOGGER.info("Change string to a integer");
+                homePageCommentsCount = Integer.parseInt(commentsCountsCount);
+            }
+            LOGGER.info("Print out in console all title from home page without comments and next to it comments count for this article");
+            System.out.println(articletitle.replaceAll("\\(\\d+\\)$", ":") + homePageCommentsCount);
 
         }
 
@@ -236,69 +239,85 @@ public class MyFisthomeworkQa2 {
         LOGGER.info("Accepting cookie.");
         driver.findElement(ACCEPT_COOKIES_BTN).click();
 
-        JavascriptExecutor jse = (JavascriptExecutor) driver;
-        jse.executeScript("window.scrollBy(0,250)");
+        LOGGER.info("Closing advertising .");
+        wait.until(ExpectedConditions.elementToBeClickable(CLOSE_ADVERTISING));
+        driver.findElement(CLOSE_ADVERTISING).click();
 
         //---------------------------HOME PAGE-----------------------------------------------------------
 
         List<WebElement> articles = driver.findElements(HOME_PAGE_ARTICLE);
-        WebElement article = articles.get(4);
+        WebElement article = articles.get(10);
 
-        String homePageTitle = article.findElement(HOME_PAGE_ARTICLE_TITLE).getText();
-        int homePageCommentsCount = getCommentsCount(article, HOME_PAGE_ARTICLE);
-//        if (!article.findElements(HOME_PAGE_ARTICLE_COMMENTS).isEmpty()){
-////           // String commentsCount = article.findElement(HOME_PAGE_ARTICLE_COMMENTS).getText();
+        String homePageTitle = article.findElement(HOME_PAGE_TITLE).getText().replaceAll("\\(\\d+\\)$", "").trim();
+        int homePageCommentsCount = getCommentsCount(article, HOME_PAGE_COMMENTS);
+//        if (!article.findElements(HOME_PAGE_COMMENTS).isEmpty()){
+////           // String commentsCount = article.findElement(HOME_PAGE_COMMENTS).getText();
         //
 ////          //   homePageCommentsCount = Integer.parseInt(commentsCount);
-//            homePageCommentsCount = getCommentsCount(article.findElement(HOME_PAGE_ARTICLE_COMMENTS).getText());
+//            homePageCommentsCount = getCommentsCount(article.findElement(HOME_PAGE_COMMENTS).getText());
 //        }
-        article.findElement(HOME_PAGE_ARTICLE_TITLE).click();
+        article.findElement(HOME_PAGE_TITLE).click();
 
         //-------------------------ARTICLE PAGE----------------------------------------------------------
-        String articlePageTitleAdditionalText = driver.findElement(ARTICLE_PAGE_TITLE_ADDITIONAL_TEXT).getText();
+        String articlePageTitle = driver.findElement(ARTICLE_PAGE_TITLE).getText();
+//        WebElement articlePageTitleText = driver.findElement(ARTICLE_PAGE_TITLE);
 
-        String articlePageTitle = driver.findElement(ARTICLE_PAGE_TITLE).getText().replaceAll(articlePageTitleAdditionalText, " ").trim();
+//        if (!articlePageTitleText.findElements(ARTICLE_PAGE_TITLE_ADDITIONAL_TEXT).isEmpty()) {
+//          String  articlePageTitleAdditionalText = driver.findElement(ARTICLE_PAGE_TITLE_ADDITIONAL_TEXT).getText();
+//            String articlePageTitle = driver.findElement(ARTICLE_PAGE_TITLE).getText().replaceAll(articlePageTitleAdditionalText, " ").trim();
+//            articlePageTitleText=
+//        }
+
+//        if (!driver.findElements(ARTICLE_PAGE_TITLE_ADDITIONAL_TEXT).isEmpty()){
+//            articlePageTitleAdditionalText = driver.findElement(ARTICLE_PAGE_TITLE_ADDITIONAL_TEXT).getText();
+//        }
+//        String articlePageTitle = driver.findElement(ARTICLE_PAGE_TITLE).getText().replaceAll(articlePageTitleAdditionalText, " ").trim();
+
         int articlePageCommentsCount = getCommentsCount(ARTICLE_PAGE_COMMENTS);
 
         Assertions.assertEquals(homePageTitle, articlePageTitle, "Wrong title!");
         Assertions.assertEquals(homePageCommentsCount, articlePageCommentsCount, "Wrong comments count");
 
         driver.findElement(ARTICLE_PAGE_COMMENTS).click();
-        //-------------------------COMMENTS PAGE----------------------------------------------------------
-        String commentsPageAdditionalText = driver.findElement(COMMENTS_PAGE_TITLE_ADDITIONAL_TEXT).getText();
-        String commentsPageTitle = driver.findElement(COMMENTS_PAGE_TITLE).getText().replaceAll(commentsPageAdditionalText, " ").trim();
 
+        //-------------------------COMMENTS PAGE----------------------------------------------------------
+        String commentsPageTitle = driver.findElement(COMMENTS_PAGE_TITLE).getText();
+//        String commentsPageAdditionalText = driver.findElement(COMMENTS_PAGE_TITLE_ADDITIONAL_TEXT).getText();
+//        String commentsPageTitle = driver.findElement(COMMENTS_PAGE_TITLE).getText().replaceAll(commentsPageAdditionalText, " ").trim();
+//        int commentsPageCommentsCount = getCommentsCount(COMMENTS_PAGE_COMMENTS_COUNT);
+//
         int commentsPageCommentsCount = 0;
         if (!driver.findElements(COMMENTS_PAGE_COMMENTS_COUNT).isEmpty()) {
-            String commentsCount =
-//            int commentsPageCommentsCount = getCommentsCount(COMMENTS_PAGE_COMMENTS_COUNT);
+            String commentsPageCommentsCountText = driver.findElement(COMMENTS_PAGE_COMMENTS_COUNT).getText();
+            commentsPageCommentsCount = Integer.parseInt(commentsPageCommentsCountText);
         }
-        Assertions.assertEquals(homePageTitle,commentsPageTitle,"Wrong title!");
-        Assertions.assertEquals(homePageCommentsCount,commentsPageCommentsCount,"Wrong comments count!");
+
+        Assertions.assertEquals(homePageTitle, commentsPageTitle, "Wrong title!");
+        Assertions.assertEquals(homePageCommentsCount, commentsPageCommentsCount, "Wrong comments count!");
     }
-        //=====================================TEST REALISATION==================================================
+    //=====================================TEST REALISATION==================================================
 
-        private int getCommentsCount (By locator){
-            int commentsCount = 0;
-            if (!driver.findElements(locator).isEmpty()) {
-                String commentsCountText = driver.findElement(locator).getText();
-                commentsCount = Integer.parseInt(commentsCountText);
-            }
-
-            return commentsCount;
+    private int getCommentsCount(By locator) {
+        int commentsCount = 0;
+        if (!driver.findElements(locator).isEmpty()) {
+            String commentsCountText = driver.findElement(locator).getText();
+            commentsCount = Integer.parseInt(commentsCountText);
         }
 
-        private int getCommentsCount (WebElement we, By locator){
-            int commentsCount = 0;
+        return commentsCount;
+    }
 
-            if (!we.findElements(locator).isEmpty()) {
-                String commentsCountText = we.findElement(locator).getText();
-                commentsCountText = commentsCountText.substring(1, commentsCountText.length() - 1);
-                commentsCount = Integer.parseInt(commentsCountText);
-            }
+    private int getCommentsCount(WebElement we, By locator) {
+        int commentsCount = 0;
 
-            return commentsCount;
+        if (!we.findElements(locator).isEmpty()) {
+            String commentsCountText = we.findElement(locator).getText();
+            commentsCountText = commentsCountText.substring(1, commentsCountText.length() - 1);
+            commentsCount = Integer.parseInt(commentsCountText);
         }
+
+        return commentsCount;
+    }
 //    @AfterEach
 //     public void CloseBrowser() {
 //        driver.close();
